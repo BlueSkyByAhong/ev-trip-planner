@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แผนที่เดินทาง พร้อมจุดชาร์จ EV - แบบละเอียด</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+        .content {
+            padding: 30px;
+        }
+        
+        /* Waypoint Selector */
+        .waypoint-selector {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .waypoint-selector h3 {
+            color: #d6336c;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .waypoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .waypoint-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .waypoint-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .waypoint-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        .waypoint-item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .waypoint-label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+        .waypoint-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .generate-route-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .generate-route-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        .selected-count {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        /* Route Analysis Section */
+        .analysis-section {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .analysis-section h2 {
+            color: #d35400;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            height: 650px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        /* Charging Points Table */
+        .charging-plan {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .charging-plan h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .charging-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .charging-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .charging-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .charging-table tr:last-child td {
+            border-bottom: none;
+        }
+        .charging-table tr:hover {
+            background: #f5f7fa;
+        }
+        .point-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+        
+        /* Day Plan */
+        .day-plan {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .day-card {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .day-card h3 {
+            color: #4a148c;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .timeline-icon {
+            font-size: 24px;
+            min-width: 30px;
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-content strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a148c;
+        }
+        
+        /* Station Details */
+        .station-detail {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .station-detail h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .station-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .station-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .station-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .station-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .station-address {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        .station-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .ptt-badge {
+            background: #ed1c24;
+            color: white;
+        }
+        .ea-badge {
+            background: #00a651;
+            color: white;
+        }
+        .station-logo {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: white;
+            padding: 5px;
+        }
+        .distance-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 8px;
+            display: inline-block;
+        }
+        .station-map-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+        .station-map-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        /* Checklist */
+        .checklist {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        .checklist h3 {
+            color: #2d6a4f;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .checklist-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .checklist-section h4 {
+            color: #2d6a4f;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .checklist-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist-section li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .checklist-section li:before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            color: #2d6a4f;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .day-plan {
+                grid-template-columns: 1fr;
+            }
+            .station-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗⚡ แผนเดินทาง EV ฉบับสมบูรณ์</h1>
+            <p>สอยดาว จันทบุรี → ทุ่งช้าง นาน | ชาร์จไฟทุก 250 กม.</p>
+        </div>
+        
+        <div class="content">
+            <!-- Waypoint Selector -->
+            <div class="waypoint-selector">
+                <h3>🎯 เลือกจุดหมายที่ต้องการแวะ (เลือกได้ 1-10 จุด)</h3>
+                <div id="selectedCount" class="selected-count">เลือกแล้ว: 0/10 จุด</div>
+                <div class="waypoint-grid">
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="ระยอง" onchange="updateWaypoints()">
+                        <span class="waypoint-number">1</span>
+                        <span class="waypoint-label">ระยอง</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="ชลบุรี" onchange="updateWaypoints()">
+                        <span class="waypoint-number">2</span>
+                        <span class="waypoint-label">ชลบุรี</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="สระบุรี" onchange="updateWaypoints()">
+                        <span class="waypoint-number">3</span>
+                        <span class="waypoint-label">สระบุรี</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="ลพบุรี" onchange="updateWaypoints()">
+                        <span class="waypoint-number">4</span>
+                        <span class="waypoint-label">ลพบุรี</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="นครสวรรค์" onchange="updateWaypoints()">
+                        <span class="waypoint-number">5</span>
+                        <span class="waypoint-label">นครสวรรค์</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="พิจิตร" onchange="updateWaypoints()">
+                        <span class="waypoint-number">6</span>
+                        <span class="waypoint-label">พิจิตร</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="พิษณุโลก" onchange="updateWaypoints()">
+                        <span class="waypoint-number">7</span>
+                        <span class="waypoint-label">พิษณุโลก</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="อุตรดิตถ์" onchange="updateWaypoints()">
+                        <span class="waypoint-number">8</span>
+                        <span class="waypoint-label">อุตรดิตถ์</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="แพร่" onchange="updateWaypoints()">
+                        <span class="waypoint-number">9</span>
+                        <span class="waypoint-label">แพร่</span>
+                    </label>
+                    <label class="waypoint-item">
+                        <input type="checkbox" class="waypoint-checkbox" data-location="เมืองนาน" onchange="updateWaypoints()">
+                        <span class="waypoint-number">10</span>
+                        <span class="waypoint-label">เมืองนาน</span>
+                    </label>
+                </div>
+                <button class="generate-route-btn" onclick="generateRoute()">🗺️ สร้างเส้นทางตามจุดที่เลือก</button>
+            </div>
+
+            <!-- Analysis Section -->
+            <div class="analysis-section">
+                <h2>📊 การวิเคราะห์เส้นทาง</h2>
+                <p><strong>เส้นทาง:</strong> สอยดาว → ระยอง → ชลบุรี → สระบุรี → นครสวรรค์ → พิษณุโลก → อุตรดิตถ์ → แพร่ → นาน → ทุ่งช้าง</p>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">950-1,000</div>
+                        <div class="stat-label">กิโลเมตร</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">13-15</div>
+                        <div class="stat-label">ชั่วโมง (ขับรถ)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">จุดชาร์จไฟ</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">203-280</div>
+                        <div class="stat-label">กม./จุดชาร์จ</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">วัน (แนะนำ)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m64!1m12!1m3!1d7909048.246913579!2d97.0!3d16.0!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m49!3e0!4m5!1s0x311ab0000000000%3A0x0!2z4LiV4LizLuC4quC4sOC4leC4reC4mSDguK3guLLguYDguKDguK3guKrguK3guKLguJTguLLguKcg4LiI4Lix4LiZ4LiX4Lia4Li44Lij4Li1!3m2!1d12.5!2d102.2!4m5!1s0x311d5dbf800000ab%3A0x0!2zUmF5b25nLCBUaGFpbGFuZA!3m2!1d12.681!2d101.282!4m5!1s0x3102b1f0000001f3%3A0x0!2zQ2hvbiBCdXJpLCBUaGFpbGFuZA!3m2!1d13.361!2d100.984!4m5!1s0x30e2991f0000003d%3A0x0!2zU2FyYWJ1cmksIFRoYWlsYW5k!3m2!1d14.529!2d100.910!4m5!1s0x30e059d0000000f5%3A0x0!2zTmFraG9uIFNhd2FuLCBUaGFpbGFuZA!3m2!1d15.705!2d100.137!4m5!1s0x30e2f0000000075d%3A0x0!2zUGhpc2FudWxvaywgVGhhaWxhbmQ!3m2!1d16.821!2d100.265!4m5!1s0x30d924f0000000ab%3A0x0!2zVXR0YXJhZGl0LCBUaGFpbGFuZA!3m2!1d17.626!2d100.099!4m5!1s0x30da0000000003e5%3A0x0!2zVGh1bmcgQ2hhbmcsIE5hbiwgVGhhaWxhbmQ!3m2!1d19.504!2d100.876!5e0!3m2!1sth!2sth!4v1234567890123" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+
+            <div class="btn-group">
+                <a href="https://www.google.com/maps/dir/ตำบลสะตอน+อำเภอสอยดาว+จันทบุรี/ระยอง/ชลบุรี/สระบุรี/นครสวรรค์/พิษณุโลก/อุตรดิตถ์/นาน/อำเภอทุ่งช้าง+นาน" target="_blank" class="btn btn-primary">
+                    🗺️ เปิดใน Google Maps
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.pttplc.evstation" target="_blank" class="btn btn-secondary">
+                    📱 ดาวน์โหลด PTT EV App
+                </a>
+            </div>
+
+            <!-- Charging Plan Table -->
+            <div class="charging-plan">
+                <h3>⚡ แผนการชาร์จไฟ (ทุกๆ 250 กม.)</h3>
+                <table class="charging-table">
+                    <thead>
+                        <tr>
+                            <th>จุดที่</th>
+                            <th>จุดชาร์จ</th>
+                            <th>ระยะทางสะสม</th>
+                            <th>สถานีที่แนะนำ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="point-number">1</span></td>
+                            <td>ระยอง/ชลบุรี</td>
+                            <td>~200 กม.</td>
+                            <td>🔴 PTT EV Station ระยอง<br>🟢 EA Anywhere ตลาดสดสตาร์<br><span class="distance-badge">📏 ระยะ: 203 กม.</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="point-number">2</span></td>
+                            <td>สระบุรี</td>
+                            <td>~450 กม.</td>
+                            <td>🔴 PTT EV Station สระบุรี<br><span class="distance-badge">📏 ระยะ: 250 กม.</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="point-number">3</span></td>
+                            <td>นครสวรรค์</td>
+                            <td>~700 กม.</td>
+                            <td>🔴 PTT EV Station เกียรติสมพงษ์<br>🟢 EA Anywhere Idea Furniture Mall<br><span class="distance-badge">📏 ระยะ: 250 กม.</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="point-number">4</span></td>
+                            <td>พิษณุโลก</td>
+                            <td>~900 กม.</td>
+                            <td>🔴 PTT EV Station มหาวิทยาลัย<br>🟢 EA Anywhere Global House<br><span class="distance-badge">📏 ระยะ: 200 กม.</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="point-number">5</span></td>
+                            <td>แพร่/นาน</td>
+                            <td>~1,180+ กม.</td>
+                            <td>🔴 PTT EV Station แพร่/นาน<br>🟢 EA Anywhere Global House แพร่<br><span class="distance-badge">📏 ระยะ: 280 กม.</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Day Plan -->
+            <div class="day-plan">
+                <div class="day-card">
+                    <h3>📅 วันที่ 1: สอยดาว → นครสวรรค์/พิษณุโลก</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🕐</div>
+                        <div class="timeline-content">
+                            <strong>เช้า (06:00)</strong>
+                            ออกจากสอยดาว จันทบุรี
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🔋</div>
+                        <div class="timeline-content">
+                            <strong>ชาร์จครั้งที่ 1 (09:00)</strong>
+                            ระยอง/ชลบุรี - ชาร์จ 30-45 นาที
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🍽️</div>
+                        <div class="timeline-content">
+                            <strong>กลางวัน (12:00)</strong>
+                            สระบุรี - ชาร์จ + รับประทานอาหาร 1 ชม.
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🔋</div>
+                        <div class="timeline-content">
+                            <strong>ชาร์จครั้งที่ 3 (15:00)</strong>
+                            นครสวรรค์ - ชาร์จ 30-45 นาที
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🏨</div>
+                        <div class="timeline-content">
+                            <strong>ค้างคืน (18:00)</strong>
+                            นครสวรรค์ หรือ พิษณุโลก
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <h3>📅 วันที่ 2: นครสวรรค์/พิษณุโลก → ทุ่งช้าง</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🕐</div>
+                        <div class="timeline-content">
+                            <strong>เช้า (07:00)</strong>
+                            ออกจากที่พัก (ชาร์จเต็มก่อนออกเดินทาง)
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🔋</div>
+                        <div class="timeline-content">
+                            <strong>ชาร์จครั้งที่ 4 (09:30)</strong>
+                            อุตรดิตถ์ - ชาร์จ 30 นาที (ถ้าจำเป็น)
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🍽️</div>
+                        <div class="timeline-content">
+                            <strong>กลางวัน (12:00)</strong>
+                            แพร่ - รับประทานอาหาร + ชาร์จ
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🔋</div>
+                        <div class="timeline-content">
+                            <strong>ชาร์จครั้งที่ 5 (14:00)</strong>
+                            นาน - ชาร์จสำรอง
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🎯</div>
+                        <div class="timeline-content">
+                            <strong>ถึงปลายทาง (16:00)</strong>
+                            อำเภอทุ่งช้าง จังหวัดนาน
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Station Details -->
+            <div class="station-detail">
+                <h3>📍 รายละเอียดสถานีชาร์จไฟทั้งหมด</h3>
+                <div class="station-grid">
+                    <div class="station-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo">
+                        <div class="station-name">🔴 PTT EV Station - ระยอง</div>
+                        <div class="station-address">📍 ถนนสุขุมวิท ต.เนินพระ อ.เมืองระยอง จ.ระยอง</div>
+                        <span class="distance-badge">📏 จากจุดเริ่มต้น: 203 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ptt-badge">PTT</span>
+                            <a href="https://www.google.com/maps/search/PTT+EV+Station+ระยอง" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo">
+                        <div class="station-name">🟢 EA Anywhere - ตลาดสดสตาร์ ระยอง</div>
+                        <div class="station-address">📍 ห้างสรรพสินค้าตลาดสดสตาร์ ถนนสุขุมวิท อ.เมืองระยอง จ.ระยอง</div>
+                        <span class="distance-badge">📏 จากจุดเริ่มต้น: 203 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ea-badge">EA Anywhere</span>
+                            <a href="https://www.google.com/maps/search/EA+Anywhere+ตลาดสดสตาร์+ระยอง" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo">
+                        <div class="station-name">🔴 PTT EV Station - ชลบุรี</div>
+                        <div class="station-address">📍 ถนนสุขุมวิท อ.เมืองชลบุรี จ.ชลบุรี (หลายสาขา)</div>
+                        <span class="distance-badge">📏 จากจุดเริ่มต้น: 180 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ptt-badge">PTT</span>
+                            <a href="https://www.google.com/maps/search/PTT+EV+Station+ชลบุรี" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo">
+                        <div class="station-name">🔴 PTT EV Station - สระบุรี</div>
+                        <div class="station-address">📍 ถนนพหลโยธิน อ.เมืองสระบุรี จ.สระบุรี</div>
+                        <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ptt-badge">PTT</span>
+                            <a href="https://www.google.com/maps/search/PTT+EV+Station+สระบุรี" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo">
+                        <div class="station-name">🔴 PTT EV Station - เกียรติสมพงษ์ นครสวรรค์</div>
+                        <div class="station-address">📍 270 หมู่ 16 ถนนเกียรติสมพงษ์ ต.ปากน้ำโพ อ.เมืองนครสวรรค์</div>
+                        <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ptt-badge">PTT</span>
+                            <a href="https://www.google.com/maps/search/PTT+EV+Station+เกียรติสมพงษ์+นครสวรรค์" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo">
+                        <div class="station-name">🟢 EA Anywhere - Idea Furniture Mall นครสวรรค์</div>
+                        <div class="station-address">📍 ศูนย์การค้า Idea Furniture Mall อ.เมืองนครสวรรค์</div>
+                        <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ea-badge">EA Anywhere</span>
+                            <a href="https://www.google.com/maps/search/EA+Anywhere+Idea+Furniture+นครสวรรค์" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo">
+                        <div class="station-name">🔴 PTT EV Station - มหาวิทยาลัยพิษณุโลก</div>
+                        <div class="station-address">📍 ใกล้มหาวิทยาลัยพิษณุโลก ถนนพระองค์เธอ อ.เมืองพิษณุโลก</div>
+                        <span class="distance-badge">📏 จากจุดก่อนหน้า: 200 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge ptt-badge">PTT</span>
+                            <a href="https://www.google.com/maps/search/PTT+EV+Station+มหาวิทยาลัยพิษณุโลก" target="_blank" class="station-map-link">🗺️ ดูตำแหน่ง</a>
+                        </div>
+                    </div>
+
+                    <div class="station-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo">
+                        <div class="station-name">🟢 EA Anywhere - พิษณุโลก ยูไนเต็ด</div>
+                        <div class="station-address">📍 ห้างสรรพสินค้าพิษณุโลก ยูไนเต็ด ถนนบรมไตรโลกนารถ</div>
+                        <span class="distance-badge">📏 จากจุดก่อนหน้า: 200 กม.</span>
+                        <div class="station-badges">
+                            <span class="badge
