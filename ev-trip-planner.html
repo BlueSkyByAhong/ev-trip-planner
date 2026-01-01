@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แผนที่เดินทาง พร้อมจุดชาร์จ EV - แบบละเอียด</title>
+    <!--
+        ⚡ Bolt Optimization: Preconnect to external domains.
+        Why: Establishes early connections to domains hosting critical resources (images, maps).
+        Impact: Reduces DNS lookup, TCP handshake, and TLS negotiation time for faster resource fetching.
+        Measurement: Can be verified using WebPageTest or Chrome DevTools (see connection setup in waterfall).
+    -->
+    <link rel="preconnect" href="https://upload.wikimedia.org">
+    <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com">
+    <link rel="preconnect" href="https://www.google.com">
     <style>
         * {
             margin: 0;
