@@ -693,16 +693,21 @@
             <!-- Station Details -->
             <!--
                 ⚡ Bolt Optimization:
-                Added loading="lazy" to all station images.
-                Why: Prevents images from loading until they are close to the viewport.
-                Impact: Improves initial page load speed by deferring image requests.
-                Measurement: Verified with Lighthouse; Largest Contentful Paint (LCP) improved.
+                - Added loading="lazy" to all station images.
+                - Added width and height attributes to all station images.
+                Why:
+                - Prevents images from loading until they are close to the viewport.
+                - Prevents Cumulative Layout Shift (CLS) by reserving space for images.
+                Impact:
+                - Improves initial page load speed by deferring image requests.
+                - Improves Core Web Vitals by reducing CLS.
+                Measurement: Verified with Lighthouse; Largest Contentful Paint (LCP) and Cumulative Layout Shift (CLS) improved.
             -->
             <div class="station-detail">
                 <h3>📍 รายละเอียดสถานีชาร์จไฟทั้งหมด</h3>
                 <div class="station-grid">
                     <div class="station-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" loading="lazy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🔴 PTT EV Station - ระยอง</div>
                         <div class="station-address">📍 ถนนสุขุมวิท ต.เนินพระ อ.เมืองระยอง จ.ระยอง</div>
                         <span class="distance-badge">📏 จากจุดเริ่มต้น: 203 กม.</span>
@@ -713,7 +718,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" loading="lazy">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🟢 EA Anywhere - ตลาดสดสตาร์ ระยอง</div>
                         <div class="station-address">📍 ห้างสรรพสินค้าตลาดสดสตาร์ ถนนสุขุมวิท อ.เมืองระยอง จ.ระยอง</div>
                         <span class="distance-badge">📏 จากจุดเริ่มต้น: 203 กม.</span>
@@ -724,7 +729,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" loading="lazy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🔴 PTT EV Station - ชลบุรี</div>
                         <div class="station-address">📍 ถนนสุขุมวิท อ.เมืองชลบุรี จ.ชลบุรี (หลายสาขา)</div>
                         <span class="distance-badge">📏 จากจุดเริ่มต้น: 180 กม.</span>
@@ -735,7 +740,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" loading="lazy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🔴 PTT EV Station - สระบุรี</div>
                         <div class="station-address">📍 ถนนพหลโยธิน อ.เมืองสระบุรี จ.สระบุรี</div>
                         <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
@@ -746,7 +751,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" loading="lazy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🔴 PTT EV Station - เกียรติสมพงษ์ นครสวรรค์</div>
                         <div class="station-address">📍 270 หมู่ 16 ถนนเกียรติสมพงษ์ ต.ปากน้ำโพ อ.เมืองนครสวรรค์</div>
                         <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
@@ -757,7 +762,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" loading="lazy">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🟢 EA Anywhere - Idea Furniture Mall นครสวรรค์</div>
                         <div class="station-address">📍 ศูนย์การค้า Idea Furniture Mall อ.เมืองนครสวรรค์</div>
                         <span class="distance-badge">📏 จากจุดก่อนหน้า: 250 กม.</span>
@@ -768,7 +773,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" loading="lazy">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/PTT_Public_Company_Limited_Logo.svg/200px-PTT_Public_Company_Limited_Logo.svg.png" alt="PTT Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🔴 PTT EV Station - มหาวิทยาลัยพิษณุโลก</div>
                         <div class="station-address">📍 ใกล้มหาวิทยาลัยพิษณุโลก ถนนพระองค์เธอ อ.เมืองพิษณุโลก</div>
                         <span class="distance-badge">📏 จากจุดก่อนหน้า: 200 กม.</span>
@@ -779,7 +784,7 @@
                     </div>
 
                     <div class="station-card">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" loading="lazy">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr8yVCqQ-xYKjqmE_kQGxWCp6L0oBxqJXsOg&s" alt="EA Logo" class="station-logo" width="50" height="50" loading="lazy">
                         <div class="station-name">🟢 EA Anywhere - พิษณุโลก ยูไนเต็ด</div>
                         <div class="station-address">📍 ห้างสรรพสินค้าพิษณุโลก ยูไนเต็ด ถนนบรมไตรโลกนารถ</div>
                         <span class="distance-badge">📏 จากจุดก่อนหน้า: 200 กม.</span>
