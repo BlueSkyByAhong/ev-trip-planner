@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แผนที่เดินทาง พร้อมจุดชาร์จ EV - แบบละเอียด</title>
+    <!--
+        ⚡ Bolt Optimization:
+        Added rel="preconnect" for external image domains.
+        Why: Instructs the browser to start a connection (DNS lookup, TCP handshake, TLS negotiation) to these domains in the background.
+        Impact: Reduces latency for fetching the station logo images, improving perceived load time and potentially Largest Contentful Paint (LCP).
+        Measurement: Verified using webpagetest.org or Chrome DevTools; look for earlier connection times in the waterfall diagram.
+    -->
+    <link rel="preconnect" href="https://upload.wikimedia.org">
+    <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com">
     <style>
         * {
             margin: 0;
