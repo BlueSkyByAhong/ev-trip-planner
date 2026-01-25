@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แผนที่เดินทาง พร้อมจุดชาร์จ EV - แบบละเอียด</title>
+    <!--
+        ⚡ Bolt Optimization:
+        Added rel="preconnect" to warm up connections to critical third-party domains.
+        Why: Reduces latency for fetching Google Maps and station logos.
+        Impact: Improves Largest Contentful Paint (LCP) and overall load time.
+    -->
+    <link rel="preconnect" href="https://www.google.com">
+    <link rel="preconnect" href="https://upload.wikimedia.org">
+    <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com">
     <style>
         * {
             margin: 0;
