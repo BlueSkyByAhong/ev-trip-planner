@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>แผนที่เดินทาง พร้อมจุดชาร์จ EV - แบบละเอียด</title>
+    <!--
+        ⚡ Bolt Optimization:
+        Added rel="preconnect" to speed up connection to critical third-party domains.
+        Why: Establishes an early connection, including DNS lookup, TCP handshake, and TLS negotiation.
+        Impact: Reduces the latency of fetching the Google Map and station logo images, improving Largest Contentful Paint (LCP).
+        Measurement: Verified with WebPageTest; DNS and connection times for these origins are reduced.
+    -->
+    <link rel="preconnect" href="https://upload.wikimedia.org">
+    <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com">
+    <link rel="preconnect" href="https://www.google.com">
     <style>
         * {
             margin: 0;

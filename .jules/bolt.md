@@ -1,0 +1,3 @@
+## 2024-05-23 - Clean Commits
+**Learning:** I failed a code review because I committed temporary files (`package.json`, `server.log`) that were generated during the frontend verification step. This is an anti-pattern, as these files are not part of the project's source code and bloat the repository.
+**Action:** I must be meticulous about cleaning up all temporary files and directories created during verification *before* finalizing a change. My future plans will include an explicit cleanup step, and I will verify the cleanup with `ls` before submitting. Never commit `node_modules`, lock files, or logs unless they are a required part of the project.
