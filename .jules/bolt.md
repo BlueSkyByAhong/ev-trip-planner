@@ -1,0 +1,3 @@
+## 2024-07-23 - Clean Commits
+**Learning:** Verification files and logs (`verification/`, `server.log`) are development artifacts and must not be included in the final commit. They clutter the repository and are not part of the production source code.
+**Action:** Always clean up temporary verification scripts, screenshots, and server logs before submitting a change. I will use `rm -rf` on temporary directories and `rm` on log files after the verification steps are complete.
